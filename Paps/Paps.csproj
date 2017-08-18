@@ -23,8 +23,6 @@
   <ItemGroup>
     <Content Include="wwwroot\css\spinner.css" />
     <Content Include="wwwroot\css\spinner.scss" />
-    <Content Include="wwwroot\css\spinners.css" />
-    <Content Include="wwwroot\css\spinners.scss" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.1.2" />

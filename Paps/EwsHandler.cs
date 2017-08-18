@@ -10,6 +10,7 @@ namespace Paps
 	public class EwsHandler
 	{
 		private static ExchangeService service; // Instance of Exchange that will query the mailbox
+		Mailbox mb = new Mailbox("email@email.com");
 
 		public EwsHandler()
 		{
@@ -21,9 +22,6 @@ namespace Paps
 		/// </summary>
 		public void CreateConnection()
 		{
-			//// Return if service is already established
-			//if (service != null) { return; }
-
 			ExchangeService newservice = new ExchangeService(ExchangeVersion.Exchange2010_SP2)
 			{
 				TraceEnabled = true,
@@ -37,9 +35,8 @@ namespace Paps
 			service = newservice;
 			newservice = null;
 
-			System.Threading.Tasks.Task.Delay(1740000).ContinueWith(t => CreateConnection());
-
-			//StreamingSubscription();
+			System.Threading.Tasks.Task.Delay(174000).ContinueWith(t => CreateConnection()); // Recycle connection to avoid a timeout.
+			
 		}
 
 		/// <summary>
@@ -93,16 +90,10 @@ namespace Paps
 		private List<EmailMessage> FindItemsByClientReference(string clientref)
 		{
 			if (string.IsNullOrEmpty(clientref))
-			{
 				return null;
-			}
 
-			Mailbox mb = new Mailbox("papretention2@stepchange.org");
+			
 			var inboxFolderId = new FolderId(WellKnownFolderName.Inbox, mb);
-
-
-			//		SearchFilter.ContainsSubstring subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject,
-			//clientref, ContainmentMode.Substring, ComparisonMode.IgnoreCase);
 
 			SearchFilter subjectFilter = new SearchFilter.ContainsSubstring(ItemSchema.Subject, clientref);
 
