@@ -1,0 +1,39 @@
+@model PAPs
+
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h2>View</h2>
+
+<table class="table table-responsive">
+	<thead>
+		<tr>
+			<td>Average</td>
+			<td>Minimum</td>
+			<td>Maximum</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>@Model.AveragePap</td>
+			<td>@Model.MinPap</td>
+			<td>@Model.MaxPap</td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+
+
+
+
+
+@foreach (var item in Model.Paps)
+{
+	<p>@item.DateGenerated</p>
+	<p>@item.FileSize</p>
+	<p>@item.Subject</p>
+}

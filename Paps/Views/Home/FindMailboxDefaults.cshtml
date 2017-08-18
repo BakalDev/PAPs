@@ -1,0 +1,24 @@
+@model PAPMailboxDefaults
+
+@{
+	ViewData["Title"] = "FindMailboxDefaults";
+}
+
+
+<h3>Mailbox Defaults</h3>
+<p class="small">Execution Time: @ViewBag.MaxTimeCount</p>
+
+<p><b>Maximum PAP</b></p>
+<p>FileSize: @Model.MaximumPap.FileSize</p>
+<p>Date Created: @Model.MaximumPap.DateGenerated</p>
+<p>Subject: @Model.MaximumPap.Subject</p>
+
+<p><b>Minimum PAP</b></p>
+<p>FileSize: @Model.MaximumPap.FileSize</p>
+<p>Date Created: @Model.MaximumPap.DateGenerated</p>
+<p>Subject: @Model.MaximumPap.Subject</p>
+
+<p><b>Average PAP Size</b></p>
+<p>Out of @Model.TotalEmailsChecked, the average filesize is @Model.AveragePap</p>
+
+<p>Total Emails: @Model.TotalEmails</p>

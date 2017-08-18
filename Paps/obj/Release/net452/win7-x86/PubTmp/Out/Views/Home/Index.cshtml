@@ -1,0 +1,96 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<h3>PAP Retention Checker</h3>
+
+<div class="row">
+	<div class="col-xs-10 col-xs-offset-1 well">
+
+		<h4>Specify Mailbox</h4>
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-10 col-xs-offset-1 well">
+
+		<h4>PAPs by Client</h4>
+
+		@using (Html.BeginForm("GetPapsByClientRef", "Home", FormMethod.Post, new { @class = "form form-inline" }))
+		{
+			<div class="form-group">
+				<p>Search by TCS or Debt Remedy DCS number.</p>
+				@Html.TextBox("clientref", null, new { @class = "form-control ", @placeholder = "Enter client ref..." })
+
+				<input type="submit" value="Search" class="form-control" />
+
+			</div>
+
+		}
+
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-10 col-xs-offset-1 well">
+
+		<h4>Mailbox Defaults</h4>
+
+
+
+		@{
+			if (DateTime.Now.TimeOfDay < new TimeSpan(17, 0, 0))
+			{
+				<div class="alert alert-danger">
+					<b>Warning! Running the mailbox default function will take over 1 hour to complete and is best ran out of hours.</b>
+				</div>
+			}
+		}
+
+		<p>
+			Find the mailbox min, max and average file sizes.
+		</p>
+
+		@Html.ActionLink("Calculate", "FindMailboxDefaults", "Home", null, new { @class = "btn btn-default btn-block", @id = "btnMailboxDefaults" })
+
+		<div class="max-processing hidden">
+			<p>Processing. Please wait as you're asking for a lot.</p>
+		</div>
+
+	</div>
+
+</div>
+
+
+
+<!--<input type="button" value="Find" class="form-control" asp-action="FindMaximumFile" asp-controller="Home" />-->
+
+
+
+<script type="text/javascript">
+	@*var maxProcessing = 0; //Accessing the number from the ViewBag
+
+	$(function () {
+		$(".max-processing").hide();
+		alert('load');
+	});
+
+
+	$('#btnMailboxDefaults').click(function (e) {
+		
+
+		if ('@ViewBag.') {
+			maxProcessing = @ViewBag.MaxProcessing;
+		}
+		alert(maxProcessing);
+
+		if (maxProcessing) {
+			$(".max-processing").show();
+		}
+		else {
+			alert('here');
+
+		}
+	});*@
+</script>
