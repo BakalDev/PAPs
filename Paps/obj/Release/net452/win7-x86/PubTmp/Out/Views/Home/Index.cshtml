@@ -1,14 +1,28 @@
-﻿@{
+﻿@model Paps.ViewModels.EwsViewModel
+@*@{Model.Mailbox = "mailbox";}*@
+
+@{
 	ViewData["Title"] = "Home Page";
 }
 
 <h3>PAP Retention Checker</h3>
+
+@if (Convert.ToBoolean(ViewBag.InvalidModel))
+{
+	<div class="alert alert-danger">
+		<p><b>Invalid! You are missing a value.</b></p>
+	</div>
+}
+
 
 <div class="row">
 	<div class="col-xs-10 col-xs-offset-1 well">
 
 		<h4>Specify Mailbox</h4>
 
+		<p>PAP Retention mailboxes are archived annually. PAP Retention 2 mailbox is for 2017.</p>
+
+		@Html.TextBox("Mailbox", "papretention2@stepchange.org", new { @class = "form-control ", @placeholder = "Enter email...", @id = "txtMailbox" })
 	</div>
 </div>
 
@@ -17,16 +31,16 @@
 
 		<h4>PAPs by Client</h4>
 
-		@using (Html.BeginForm("GetPapsByClientRef", "Home", FormMethod.Post, new { @class = "form form-inline" }))
+		@using (Html.BeginForm("GetPapsByClientRef", "Home", FormMethod.Post, new { @class = "form form-inline mailbox-client" }))
 		{
 			<div class="form-group">
 				<p>Search by TCS or Debt Remedy DCS number.</p>
-				@Html.TextBox("clientref", null, new { @class = "form-control ", @placeholder = "Enter client ref..." })
+				@Html.TextBox("ClientRef", null, new { @class = "form-control ", @placeholder = "Enter client ref..." })
+
+				@Html.HiddenFor(e => e.Mailbox, new { @id = "hdnMailboxClient", @class = "mailbox" })
 
 				<input type="submit" value="Search" class="form-control" />
-
 			</div>
-
 		}
 
 	</div>
@@ -34,13 +48,10 @@
 
 <div class="row">
 	<div class="col-xs-10 col-xs-offset-1 well">
-
 		<h4>Mailbox Defaults</h4>
 
-
-
 		@{
-			if (DateTime.Now.TimeOfDay < new TimeSpan(17, 0, 0))
+			if (DateTime.Now.TimeOfDay < new TimeSpan(17, 0, 0) && 1 == 2)
 			{
 				<div class="alert alert-danger">
 					<b>Warning! Running the mailbox default function will take over 1 hour to complete and is best ran out of hours.</b>
@@ -48,49 +59,98 @@
 			}
 		}
 
-		<p>
-			Find the mailbox min, max and average file sizes.
-		</p>
+		@using (Html.BeginForm("FindMailboxDefaults", "Home", FormMethod.Post, new { @class = "form form-inline mailbox-defaults" }))
+		{
+			<div class="form-group">
 
-		@Html.ActionLink("Calculate", "FindMailboxDefaults", "Home", null, new { @class = "btn btn-default btn-block", @id = "btnMailboxDefaults" })
+				<div class="form-group">
+					<p>Enter the number of emails to check, 0 is unlimited, be aware that the mailbox is huge and would take a long time to process...</p>
+					@Html.TextBox("BatchSize", null, new { @class = "form-control ", @placeholder = "Processing batch size...", @value = "0" })
+					<br />
+				</div>
 
-		<div class="max-processing hidden">
-			<p>Processing. Please wait as you're asking for a lot.</p>
+				@Html.HiddenFor(i => i.Mailbox, new { @id = "hdnMailboxDefaults", @class = "mailbox" })
+
+				<p><br/><input type="submit" value="Search" class="btn btn-default btn-block mailbox-defaults-submit" id="btnMailboxDefaults" /></p>
+			</div>
+		}
+
+		<div class="mailbox-defaults-processing hidden small">
+			<br />
+			<p>Processing for <span class="badge" id="mailboxProcessingTimer"></span></p>
 		</div>
 
-	</div>
+		<div class="spinner-square hidden"></div>
 
+	</div>
 </div>
 
 
-
-<!--<input type="button" value="Find" class="form-control" asp-action="FindMaximumFile" asp-controller="Home" />-->
-
-
-
-<script type="text/javascript">
-	@*var maxProcessing = 0; //Accessing the number from the ViewBag
-
-	$(function () {
-		$(".max-processing").hide();
-		alert('load');
-	});
+@section Scripts {
+	<script type="text/javascript">
 
 
-	$('#btnMailboxDefaults').click(function (e) {
-		
+		/// Assign mailbox input to hidden field.
+		$(".form").submit(function () {
+			$(".mailbox").val($("#txtMailbox").val());
+		});
 
-		if ('@ViewBag.') {
-			maxProcessing = @ViewBag.MaxProcessing;
+		$(".mailbox-defaults").submit(function () {
+			//$('.mailbox-defaults-submit').prop("disabled", "disabled");
+			$('.mailbox-defaults-submit').prop('disabled', true);
+
+			// Call
+			MailboxDefaults();
+		});
+
+		function MailboxDefaults() {
+			console.log('mailbox defaults');
+
+			// Set the button text
+			$('.mailbox-defaults-submit').text('Calculating ');
+
+			// Set link text
+			setInterval(UpdateMailboxDefaultsText, 1000);
+
+			// Toggle the spinner
+			$('.mailbox-defaults-processing').removeClass('hidden');
+			$('.spinner-square').removeClass('hidden');
+
+			// Set stopwatch
+			var s = 0;
+			$('#mailboxProcessingTimer').text(0 + " seconds");
+			setInterval(function () {
+				s++;
+				if (s == 1) {
+					$('#mailboxProcessingTimer').text(s + " second");
+				}
+				else {
+					$('#mailboxProcessingTimer').text(s + " seconds");
+				}
+			}, 1000);
 		}
-		alert(maxProcessing);
 
-		if (maxProcessing) {
-			$(".max-processing").show();
+		/// Show calculate button progress
+		function UpdateMailboxDefaultsText() {
+			// Set the link text
+			var mailboxLinkText = $('.mailbox-defaults-submit').text();
+			switch (mailboxLinkText) {
+				case 'Calculating ':
+					$('.mailbox-defaults-submit').text('Calculating. ');
+					break
+				case 'Calculating. ':
+					$('.mailbox-defaults-submit').text('Calculating.. ');
+					break;
+				case 'Calculating.. ':
+					$('.mailbox-defaults-submit').text('Calculating... ');
+					break;
+				case 'Calculating... ':
+					$('.mailbox-defaults-submit').text('Calculating ');
+					break;
+			}
 		}
-		else {
-			alert('here');
+	</script>
+}
 
-		}
-	});*@
-</script>
+
+

@@ -45,7 +45,7 @@ namespace Paps.Models
 
 		public int TotalEmails { get; set; }
 
-		public int TotalEmailsChecked { get; set; }
+		public int ExecutionTime { get; set; }
 
 	}
 

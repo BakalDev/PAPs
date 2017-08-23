@@ -1,24 +1,57 @@
 @model PAPMailboxDefaults
 
 @{
-	ViewData["Title"] = "FindMailboxDefaults";
+	ViewData["Title"] = "Mailbox Defaults";
 }
 
 
 <h3>Mailbox Defaults</h3>
-<p class="small">Execution Time: @ViewBag.MaxTimeCount</p>
+<p class="small">Execution Time: @Model.ExecutionTime seconds</p>
 
-<p><b>Maximum PAP</b></p>
-<p>FileSize: @Model.MaximumPap.FileSize</p>
-<p>Date Created: @Model.MaximumPap.DateGenerated</p>
-<p>Subject: @Model.MaximumPap.Subject</p>
+<div class="row">
+	<div class="well">
+		<p><b>Minimum PAP</b></p>
+		<p>FileSize: <span class="filesize">@Model.MinimumPap.FileSize</span></p>
+		<p>Date Created: @Model.MinimumPap.DateGenerated</p>
+		<p>Subject: @Model.MinimumPap.Subject</p>
+	</div>
+</div>
 
-<p><b>Minimum PAP</b></p>
-<p>FileSize: @Model.MaximumPap.FileSize</p>
-<p>Date Created: @Model.MaximumPap.DateGenerated</p>
-<p>Subject: @Model.MaximumPap.Subject</p>
+<div class="row">
+	<div class="well">
+		<p><b>Maximum PAP</b></p>
+		<p>FileSize:<span class="filesize"> @Model.MaximumPap.FileSize</span></p>
+		<p>Date Created: @Model.MaximumPap.DateGenerated</p>
+		<p>Subject: @Model.MaximumPap.Subject</p>
 
-<p><b>Average PAP Size</b></p>
-<p>Out of @Model.TotalEmailsChecked, the average filesize is @Model.AveragePap</p>
+	</div>
+</div>
+<div class="row">
+	<div class="well">
+		<p><b>Average PAP Size</b></p>
+		<p>Processed <span class="badge">@Model.TotalEmails</span> emails, the average filesize is <span class="filesize">@Model.AveragePap</span></p>
+	</div>
+</div>
 
-<p>Total Emails: @Model.TotalEmails</p>
+@section Scripts {
+	<script type="text/javascript">
+
+		$(function () {
+			$('.filesize').each(function (e) {
+				var size = $(this).text();
+				size = formatBytes(size);
+				$(this).text(size);
+			});
+		});
+
+
+		function formatBytes(bytes) {
+			if (bytes < 1024) return bytes + " Bytes";
+			else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + " KB";
+			else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + " MB";
+			else return (bytes / 1073741824).toFixed(3) + " GB";
+		};
+
+	</script>
+
+}

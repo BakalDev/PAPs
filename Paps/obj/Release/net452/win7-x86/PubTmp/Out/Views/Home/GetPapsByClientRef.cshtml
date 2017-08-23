@@ -2,38 +2,62 @@
 
 
 @{
-    ViewData["Title"] = "View";
+	ViewData["Title"] = "View";
 }
 
-<h2>View</h2>
 
-<table class="table table-responsive">
-	<thead>
-		<tr>
-			<td>Average</td>
-			<td>Minimum</td>
-			<td>Maximum</td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>@Model.AveragePap</td>
-			<td>@Model.MinPap</td>
-			<td>@Model.MaxPap</td>
-		</tr>
-	</tbody>
-</table>
+<h3>Client Comm Details</h3>
 
+<div class="row">
+	<div class="well">
+		<p><b>Minimum PAP</b></p>
+		<p>FileSize:<span class="filesize"> @Model.MinPap</span></p>
+	</div>
+</div>
 
+<div class="row">
+	<div class="well">
+		<p><b>Maximum PAP</b></p>
+		<p>FileSize:<span class="filesize"> @Model.MaxPap</span></p>
+	</div>
+</div>
 
+<div class="row">
+	<div class="well">
+		<p><b>Average PAP</b></p>
+		<p>FileSize:<span class="filesize"> @Model.AveragePap</span></p>
+	</div>
+</div>
 
-
-
-
+<h3>Client Comm List</h3>
 
 @foreach (var item in Model.Paps)
 {
-	<p>@item.DateGenerated</p>
-	<p>@item.FileSize</p>
-	<p>@item.Subject</p>
+	<p>FileSize: <span class="filesize"> @item.FileSize</span></p>
+			<p>Date Created: @item.DateGenerated</p>
+					<p>Subject: @item.Subject</p>
+}
+
+
+@section Scripts {
+	<script type="text/javascript">
+
+		$(function () {
+			$('.filesize').each(function (e) {
+				var size = $(this).text();
+				size = formatBytes(size);
+				$(this).text(size);
+			});
+		});
+
+
+		function formatBytes(bytes) {
+			if (bytes < 1024) return bytes + " Bytes";
+			else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + " KB";
+			else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + " MB";
+			else return (bytes / 1073741824).toFixed(3) + " GB";
+		};
+
+	</script>
+
 }
